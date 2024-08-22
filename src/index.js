@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require('path');
-const funcoes = require('./funcoes.js')
 const app = express();
+const { adicionarPontos, gerarClassificacao } = require('./funcoes.js')
 
 app.get('/', async (req, res) => {
     const options = {
@@ -67,9 +67,9 @@ app.get('/enviar-formulario', async (req, res) => {
 
     const team = req.query.team;
     const score = req.query.score;
-    //funcoes.adicionarPontos(team,score)
+    adicionarPontos(team,score)
 
-    res.send(`A equipe ${team} marcou ${score}`) 
+    res.send(`A equipe ${team} marcou ${score} pontos`) 
 });
 
 app.listen(3000, ()=>{console.log("Servidor rodando...")});
