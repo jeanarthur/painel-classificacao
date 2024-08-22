@@ -48,4 +48,4 @@ async function executar(){
     console.log(await gerarClassificacao());
 }
 
-executar();
+//executar();
