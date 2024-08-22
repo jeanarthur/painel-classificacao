@@ -1,11 +1,11 @@
 const express = require("express");
 const path = require('path');
-const funcoes = require('./funcoes')
+const funcoes = require('./funcoes.js')
 const app = express();
 
 app.get('/', async (req, res) => {
     const options = {
-        root: path.join('./')
+        root: path.join('./src')
     };
  
     const fileName = 'index.html';
@@ -20,7 +20,7 @@ app.get('/', async (req, res) => {
 
 app.get('/output.css', async (req, res) => {
     const options = {
-        root: path.join('./')
+        root: path.join('./src')
     };
  
     const fileName = 'output.css';
@@ -35,7 +35,7 @@ app.get('/output.css', async (req, res) => {
 
 app.get('/background.png', async (req, res) => {
     const options = {
-        root: path.join('./')
+        root: path.join('./src')
     };
  
     const fileName = 'background.png';
@@ -50,7 +50,7 @@ app.get('/background.png', async (req, res) => {
 
 app.get('/formulario', async (req, res) => {
     const options = {
-        root: path.join('./')
+        root: path.join('./src')
     };
  
     const fileName = 'form.html';
@@ -67,7 +67,7 @@ app.get('/enviar-formulario', async (req, res) => {
 
     const team = req.query.team;
     const score = req.query.score;
-    funcoes.adicionarPontos(team,score)
+    //funcoes.adicionarPontos(team,score)
 
     res.send(`A equipe ${team} marcou ${score}`) 
 });
