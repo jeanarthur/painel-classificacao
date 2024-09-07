@@ -1,4 +1,4 @@
-const fs = require('node:fs/promises');
+const fs = require('fs').promises;
 
 async function adicionarPontos(equipe, pontos){
     let pontuacoes = await obterPontuacoes();
@@ -7,14 +7,14 @@ async function adicionarPontos(equipe, pontos){
         const temEquipe = Object.keys(pontuacoes).includes(equipe);
 
         if (temEquipe){
-            pontuacoes[equipe].pontuacao += pontos;
+            pontuacoes[equipe].pontuacao = parseInt(pontuacoes[equipe].pontuacao) + parseInt(pontos);
         } else {
             pontuacoes[equipe] = {
-                pontuacao: pontos
+                pontuacao: parseInt(pontos)
             }
         }
 
-        await fs.writeFile('./pontuacao.json', JSON.stringify(pontuacoes));
+        await fs.writeFile('./src/pontuacao.json', JSON.stringify(pontuacoes));
 
     } catch (erro) {
         console.error(`Erro ao escrever arquivo: ${erro}`);
@@ -24,7 +24,7 @@ async function adicionarPontos(equipe, pontos){
 async function gerarClassificacao() {
     let pontuacoes = await obterPontuacoes();
     pontuacoes.equipes = Object.keys(pontuacoes)
-        .map(elem => { return { equipe: elem, pontuacao: pontuacoes[elem].pontuacao } });
+        .map(elem => { return { equipe: elem, pontuacao: parseInt(pontuacoes[elem].pontuacao) } });
 
     return pontuacoes.equipes.sort(function(a,b) {
         return a.pontuacao < b.pontuacao ? 1 : a.pontuacao > b.pontuacao ? -1 : 0;
@@ -33,11 +33,26 @@ async function gerarClassificacao() {
 
 async function obterPontuacoes(){
     try {
-        pontuacoes = await fs.readFile('./pontuacao.json', 'utf8');
+        pontuacoes = await fs.readFile('./src/pontuacao.json', 'utf8');
         pontuacoes = JSON.parse(pontuacoes);
         return pontuacoes;
     } catch (erro){
-        console.error(`Erro ao ler arquivo: ${erro}`);
+        if (erro.code === 'ENOENT') {
+            return await criarArquivoPontuacoes();
+        } else {
+            console.error(`Erro ao ler arquivo: ${erro}`);
+        }
+    }
+}
+
+async function criarArquivoPontuacoes(){
+    try {
+        pontuacoes = {};
+        await fs.writeFile('./src/pontuacao.json', JSON.stringify(pontuacoes));
+        return pontuacoes;
+
+    } catch (erro) {
+        console.error(`Erro ao criar arquivo de pontuações: ${erro}`);
     }
 }
 
@@ -48,4 +63,9 @@ async function executar(){
     console.log(await gerarClassificacao());
 }
 
-//executar();
+// executar();
+
+module.exports = {
+    adicionarPontos,
+    gerarClassificacao
+}
