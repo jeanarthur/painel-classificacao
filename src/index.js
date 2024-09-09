@@ -18,6 +18,10 @@ app.get('/', async (req, res) => {
     });
 });
 
+app.get('/status', (req, res) => {
+    res.send('OK');
+})
+
 app.get('/output.css', async (req, res) => {
     const options = {
         root: path.join('./src')
@@ -72,4 +76,12 @@ app.get('/enviar-formulario', async (req, res) => {
     res.send(`A equipe ${team} marcou ${score} pontos`) 
 });
 
-app.listen(3000, ()=>{console.log("Servidor rodando...")});
+app.listen(3000, ()=>{
+    console.log("Servidor rodando...");
+    console.log(`
+        Para testes locais, abra no navegador:
+        - http://localhost:3000/ -> Para visualizar o painel de classificação
+        - http://localhost:3000/formulario -> Para visualizar o formulário de registro de pontos
+        - http://localhost:3000/status -> Para visualizar um 'OK' indicando que o servidor está respondendo
+    `);
+});
