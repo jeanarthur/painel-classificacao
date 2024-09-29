@@ -1,11 +1,18 @@
 const express = require("express");
 const morgan = require('morgan');
 const path = require('path');
+const { z } = require('zod');
 
 const app = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const { adicionarPontos, gerarClassificacao } = require('./funcoes.js');
+
+const formularioSchema = z.object({
+    team: z.string().min(1, "O nome da equipe é obrigatório"),
+    score: z.string()
+        .regex(/^[0-9]\d*$/, "A pontuação deve ser um número inteiro positivo")
+});
 
 //Configurar o EJS
 app.set('view engine', 'ejs');
@@ -66,35 +73,45 @@ app.get('/formulario', async (req, res) => {
     };
 
     const classificacao = await gerarClassificacao();
-    res.render('form', { equipes: classificacao }); 
+    res.render('form', { equipes: classificacao });
 });
 
 app.post('/enviar-formulario', (req, res) => {
-    const team = req.body.team;
-    const score = req.body.score;
-    adicionarPontos(team, score);
+    try {
+        const parsedData = formularioSchema.parse(req.body);
+        
+        const { team, score } = parsedData
+        console.log(team, score)
+        adicionarPontos(team, score);
 
-    fs.readFile('pontuacao.json', (err, data) => {
-        let pontuacoes = [];
+        fs.readFile('pontuacao.json', (err, data) => {
+            let pontuacoes = [];
 
-        if (!err) {
-            pontuacoes = JSON.parse(data);
-        }
-
-        pontuacoes.push({ team, score });
-
-        fs.writeFile('pontuacao.json', JSON.stringify(pontuacoes, null, 2), (err) => {
-            if (err) {
-                console.error('Erro ao salvar pontuações:', err);
-                return res.status(500).send('Erro ao salvar pontuações.');
+            if (!err) {
+                pontuacoes = JSON.parse(data);
             }
-            res.send(`A equipe ${team} marcou ${score} pontos`);
+
+            pontuacoes.push({ team, score });
+
+            fs.writeFile('pontuacao.json', JSON.stringify(pontuacoes, null, 2), (err) => {
+                if (err) {
+                    console.error('Erro ao salvar pontuações:', err);
+                    return res.status(500).send('Erro ao salvar pontuações.');
+                }
+                res.send(`A equipe ${team} marcou ${score} pontos`);
+            });
         });
-    });
+    } catch (error) {
+        // Se a validação falhar, retorne um erro
+        if (error instanceof z.ZodError) {
+            return res.status(400).send(error.errors.map(e => e.message).join(', '));
+        }
+        res.status(500).send('Erro interno do servidor');
+    }
 });
 
 
-app.listen(3000, ()=>{
+app.listen(3000, () => {
     console.log("Servidor rodando...");
     console.log(`
         Para testes locais, abra no navegador:
