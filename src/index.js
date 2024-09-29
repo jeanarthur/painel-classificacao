@@ -3,6 +3,8 @@ const path = require('path');
 const app = express();
 const { adicionarPontos, gerarClassificacao } = require('./funcoes.js')
 
+app.use(express.static('./src/public'));
+
 app.get('/', async (req, res) => {
     const options = {
         root: path.join('./src')
@@ -21,36 +23,6 @@ app.get('/', async (req, res) => {
 app.get('/status', (req, res) => {
     res.send('OK');
 })
-
-app.get('/output.css', async (req, res) => {
-    const options = {
-        root: path.join('./src')
-    };
- 
-    const fileName = 'output.css';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            console.error('Error sending file:', err);
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });
-});
-
-app.get('/background.png', async (req, res) => {
-    const options = {
-        root: path.join('./src')
-    };
- 
-    const fileName = 'background.png';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            console.error('Error sending file:', err);
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });
-});
 
 app.get('/formulario', async (req, res) => {
     const options = {
