@@ -1,21 +1,21 @@
 const express = require("express");
 const path = require('path');
 const app = express();
-const { adicionarPontos, gerarClassificacao } = require('./funcoes.js')
+const { adicionarPontos, gerarClassificacao } = require('./funcoes.js');
+
+//Configurar o EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(express.static(path.join(__dirname, 'src')));
 
 app.get('/', async (req, res) => {
     const options = {
         root: path.join('./src')
     };
- 
-    const fileName = 'index.html';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            console.error('Error sending file:', err);
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });
+    const classificacao = await gerarClassificacao();
+
+    res.render('index', { classificacao });
 });
 
 app.get('/status', (req, res) => {
