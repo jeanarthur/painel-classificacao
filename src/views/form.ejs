@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./output.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <title>Painel de classificação</title>
+</head>
+<body class="bg-[url('background.png')] bg-no-repeat bg-cover bg-center h-screen font-poppins">
+    <div class="min-h-screen py-6 flex flex-col justify-center sm:py-12">
+        <div class="relative py-3 sm:max-w-xl sm:mx-auto mt-36">
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-pink-400 to-purple-600 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl">
+          </div>
+          <div class="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
+      
+            <div class="max-w-md mx-auto">
+              <div>
+                <h1 class="text-2xl font-semibold">Registrar pontuação</h1>
+              </div>
+              <div class="divide-y divide-gray-200">
+                <form method="get" action="/enviar-formulario">
+                    <div class="py-8 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
+                      <div class="relative">
+                        <select name="team" id="team" class="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Equipe">
+                          <% equipes.forEach(equipe => { %>
+                              <option><%= equipe.equipe %></option>
+                          <% }); %>
+                        </select>
+                        <label for="team" class="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">Equipe</label>
+                      </div>
+                      <div class="relative">
+                        <input autocomplete="off" id="score" name="score" type="number" class="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Pontuação" />
+                        <label for="score" class="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">Pontuação</label>
+                      </div>
+                      <div class="relative grid">
+                        <button type="submit" class="bg-purple-600 text-white rounded-md px-2 py-1">Registrar</button>
+                      </div>
+                    </div>
+                </form>
+              </div>
+            </div>
+      
+          </div>
+        </div>
+      </div>
+</body>
+</html>

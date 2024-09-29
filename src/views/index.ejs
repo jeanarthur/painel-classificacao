@@ -28,12 +28,12 @@
             <div class="relative ml-6 mt-12 w-5/6 h-4/5 rounded-xl bg-[#651acf]">
                 <div class="absolute bottom-0 w-full h-24 rounded-xl opacity-70 bg-gradient-to-t from-[#651acf] to-transparent z-50"></div>
                 <ul class="list-none text-center text-xl text-white py-4 h-full overflow-auto no-scrollbar">
-                    <% for (let i = 6; i <= 20; i++) { %>
-                        <li><%= i %>...............Nome Escola <%= i %>...............<%= 70 - (i - 6) * 5 %></li>
+                    <% for (let i = 5; i < Math.min(20, classificacao.length); i++) { %>
+                        <li><%= i + 1 %>....................<%= classificacao[i].equipe %>....................<%= classificacao[i].pontuacao %></li>
                     <% } %>
                 </ul>
             </div>
-        </div>
+        </div>        
     </div>
 </body>
 </html>

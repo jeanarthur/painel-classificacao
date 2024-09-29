@@ -57,14 +57,8 @@ app.get('/formulario', async (req, res) => {
         root: path.join('./src')
     };
  
-    const fileName = 'form.html';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            console.error('Error sending file:', err);
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });
+    const classificacao = await gerarClassificacao();
+    res.render('form', { equipes: classificacao }); 
 });
 
 app.get('/enviar-formulario', async (req, res) => {
