@@ -5,7 +5,13 @@ const path = require('path');
 const app = express();
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const { adicionarPontos, gerarClassificacao } = require('./funcoes.js')
+const { adicionarPontos, gerarClassificacao } = require('./funcoes.js');
+
+//Configurar o EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(express.static(path.join(__dirname, 'src')));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('./src/public'));
@@ -15,15 +21,9 @@ app.get('/', async (req, res) => {
     const options = {
         root: path.join('./src')
     };
+    const classificacao = await gerarClassificacao();
 
-    const fileName = 'index.html';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            console.error('Error sending file:', err);
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });
+    res.render('index', { classificacao });
 });
 
 app.get('/status', (req, res) => {
@@ -65,14 +65,8 @@ app.get('/formulario', async (req, res) => {
         root: path.join('./src')
     };
 
-    const fileName = 'form.html';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            console.error('Error sending file:', err);
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });
+    const classificacao = await gerarClassificacao();
+    res.render('form', { equipes: classificacao }); 
 });
 
 app.post('/enviar-formulario', (req, res) => {
