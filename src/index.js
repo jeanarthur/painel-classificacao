@@ -1,9 +1,12 @@
 const express = require("express");
+const morgan = require('morgan');
 const path = require('path');
+
 const app = express();
 const { adicionarPontos, gerarClassificacao } = require('./funcoes.js')
 
 app.use(express.static('./src/public'));
+app.use(morgan('dev'));
 
 app.get('/', async (req, res) => {
     const options = {
