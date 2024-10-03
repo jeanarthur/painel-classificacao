@@ -8,6 +8,10 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const { adicionarPontos, gerarClassificacao } = require('./funcoes.js');
 
+//Configuração do Squelize
+const {Pontuacao} = require('../models');
+
+
 const formularioSchema = z.object({
     team: z.string().min(1, "O nome da equipe é obrigatório"),
     score: z.string()
@@ -36,23 +40,33 @@ app.get('/formulario', async (req, res) => {
     res.render('form', { equipes: classificacao });
 });
 
-app.post('/enviar-formulario', (req, res) => {
-    try {
-        const parsedData = formularioSchema.parse(req.body);
+app.post('/enviar-formulario', async (req, res) => {
+    const parsedData = formularioSchema.parse(req.body);
         
-        const { team, score } = parsedData
-        console.log(team, score)
-        adicionarPontos(team, score);
+    const { team, score } = parsedData;
+    adicionarPontos(team, score);
+    
+    try{
+        await Pontuacao.create({equipe:team, pontuacao:score})
         res.send(`A equipe ${team} marcou ${score} pontos`);
-    } catch (error) {
+    } catch(error) {
         // Se a validação falhar, retorne um erro
         if (error instanceof z.ZodError) {
             return res.status(400).send(error.errors.map(e => e.message).join(', '));
         }
-        res.status(500).send('Erro interno do servidor');
+        
+        if(error.name === 'SequelizeUniqueConstraintError') {
+            res.send('Erro: Time em uso')
+        } else {
+            console.log(error)
+            res.status(500).send('Erro interno do servidor');
+        }
     }
-});
+    
+    
 
+    
+});
 
 app.listen(3000, () => {
     console.log("Servidor rodando...");
