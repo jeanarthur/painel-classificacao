@@ -67,5 +67,6 @@ async function executar(){
 
 module.exports = {
     adicionarPontos,
-    gerarClassificacao
+    gerarClassificacao,
+    obterPontuacoes
 }

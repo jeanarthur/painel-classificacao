@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     equipe: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
+      primaryKey: true
     }, 
     pontuacao: {
       type: DataTypes.INTEGER,
