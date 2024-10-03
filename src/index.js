@@ -1,82 +1,69 @@
 const express = require("express");
+const morgan = require('morgan');
 const path = require('path');
+const { z } = require('zod');
+
 const app = express();
-const { adicionarPontos, gerarClassificacao } = require('./funcoes.js')
+const bodyParser = require('body-parser');
+const { adicionarPontos, gerarClassificacao, obterPontuacoes } = require('./funcoes.js');
+
+//Configuração do Squelize
+const {Pontuacao} = require('../models');
+
+const formularioSchema = z.object({
+    team: z.string().min(1, "O nome da equipe é obrigatório"),
+    score: z.string()
+        .regex(/^[0-9]\d*$/, "A pontuação deve ser um número inteiro positivo")
+});
+
+//Configurar o EJS
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static('./src/public'));
+app.use(morgan('dev'));
 
 app.get('/', async (req, res) => {
-    const options = {
-        root: path.join('./src')
-    };
- 
-    const fileName = 'index.html';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            console.error('Error sending file:', err);
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });
+    const classificacao = await gerarClassificacao();
+    res.render('index', { classificacao });
 });
 
 app.get('/status', (req, res) => {
     res.send('OK');
 })
 
-app.get('/output.css', async (req, res) => {
-    const options = {
-        root: path.join('./src')
-    };
- 
-    const fileName = 'output.css';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            console.error('Error sending file:', err);
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });
-});
-
-app.get('/background.png', async (req, res) => {
-    const options = {
-        root: path.join('./src')
-    };
- 
-    const fileName = 'background.png';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            console.error('Error sending file:', err);
-        } else {
-            console.log('Sent:', fileName);
-        }
-    });
-});
-
 app.get('/formulario', async (req, res) => {
-    const options = {
-        root: path.join('./src')
-    };
- 
-    const fileName = 'form.html';
-    res.sendFile(fileName, options, function (err) {
-        if (err) {
-            console.error('Error sending file:', err);
-        } else {
-            console.log('Sent:', fileName);
+    const classificacao = await gerarClassificacao();
+    res.render('form', { equipes: classificacao });
+});
+
+app.post('/enviar-formulario', async (req, res) => {
+    try{
+        const parsedData = formularioSchema.parse(req.body);
+            
+        const { team, score } = parsedData;
+        await adicionarPontos(team, score);
+
+        const pontuacao = await obterPontuacoes();
+        await Pontuacao.upsert({equipe:team, pontuacao:pontuacao[team].pontuacao});
+        res.send(`A equipe ${team} marcou ${score} pontos`);
+    } catch(error) {
+        // Se a validação falhar, retorne um erro
+        if (error instanceof z.ZodError) {
+            return res.status(400).send(error.errors.map(e => e.message).join(', '));
         }
-    });
+        
+        if(error.name === 'SequelizeUniqueConstraintError') {
+            res.send('Erro: Equipe em uso')
+        } else {
+            console.log(error)
+            res.status(500).send('Erro interno do servidor');
+        }
+    }
 });
 
-app.get('/enviar-formulario', async (req, res) => {
-
-    const team = req.query.team;
-    const score = req.query.score;
-    adicionarPontos(team,score)
-
-    res.send(`A equipe ${team} marcou ${score} pontos`) 
-});
-
-app.listen(3000, ()=>{
+app.listen(3000, () => {
     console.log("Servidor rodando...");
     console.log(`
         Para testes locais, abra no navegador:
