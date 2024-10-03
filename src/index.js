@@ -7,6 +7,10 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const { adicionarPontos, gerarClassificacao } = require('./funcoes.js');
 
+//Configuração do Squelize
+const {Pontuacao} = require('../models');
+
+
 //Configurar o EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -29,13 +33,26 @@ app.get('/formulario', async (req, res) => {
     res.render('form', { equipes: classificacao }); 
 });
 
-app.post('/enviar-formulario', (req, res) => {
-    const team = req.body.team;
-    const score = req.body.score;
-    adicionarPontos(team, score);
-    res.send(`A equipe ${team} marcou ${score} pontos`);
-});
+app.post('/enviar-formulario', async (req, res) => {
+    const equipe = req.body.team;
+    const pontuacao = req.body.score;
+    adicionarPontos(equipe, pontuacao);
+    try{
+        await Pontuacao.create({equipe:equipe, pontuacao:pontuacao})
+        res.send(`A equipe ${equipe} marcou ${pontuacao} pontos`);
+    } catch(error) {
+        if(error.name === 'SequelizeUniqueConstraintError') {
+            res.send('Erro: Time em uso')
+        } else {
+            console.log(error)
+            res.send('Erro ao cadastrar pontuacao')
+        }
+    }
+    
+    
 
+    
+});
 
 app.listen(3000, ()=>{
     console.log("Servidor rodando...");
