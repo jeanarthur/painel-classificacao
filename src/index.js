@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require('morgan');
 const path = require('path');
+const { z } = require('zod');
 
 const app = express();
 const bodyParser = require('body-parser');
@@ -10,6 +11,12 @@ const { adicionarPontos, gerarClassificacao } = require('./funcoes.js');
 //Configuração do Squelize
 const {Pontuacao} = require('../models');
 
+
+const formularioSchema = z.object({
+    team: z.string().min(1, "O nome da equipe é obrigatório"),
+    score: z.string()
+        .regex(/^[0-9]\d*$/, "A pontuação deve ser um número inteiro positivo")
+});
 
 //Configurar o EJS
 app.set('view engine', 'ejs');
@@ -30,22 +37,29 @@ app.get('/status', (req, res) => {
 
 app.get('/formulario', async (req, res) => {
     const classificacao = await gerarClassificacao();
-    res.render('form', { equipes: classificacao }); 
+    res.render('form', { equipes: classificacao });
 });
 
 app.post('/enviar-formulario', async (req, res) => {
-    const equipe = req.body.team;
-    const pontuacao = req.body.score;
-    adicionarPontos(equipe, pontuacao);
+    const parsedData = formularioSchema.parse(req.body);
+        
+    const { team, score } = parsedData;
+    adicionarPontos(team, score);
+    
     try{
-        await Pontuacao.create({equipe:equipe, pontuacao:pontuacao})
-        res.send(`A equipe ${equipe} marcou ${pontuacao} pontos`);
+        await Pontuacao.create({equipe:team, pontuacao:score})
+        res.send(`A equipe ${team} marcou ${score} pontos`);
     } catch(error) {
+        // Se a validação falhar, retorne um erro
+        if (error instanceof z.ZodError) {
+            return res.status(400).send(error.errors.map(e => e.message).join(', '));
+        }
+        
         if(error.name === 'SequelizeUniqueConstraintError') {
             res.send('Erro: Time em uso')
         } else {
             console.log(error)
-            res.send('Erro ao cadastrar pontuacao')
+            res.status(500).send('Erro interno do servidor');
         }
     }
     
@@ -54,7 +68,7 @@ app.post('/enviar-formulario', async (req, res) => {
     
 });
 
-app.listen(3000, ()=>{
+app.listen(3000, () => {
     console.log("Servidor rodando...");
     console.log(`
         Para testes locais, abra no navegador:

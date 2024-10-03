@@ -1,1 +1,62 @@
-{"Equipe 1":{"pontuacao":100},"Equipe 2":{"pontuacao":93},"Equipe 3":{"pontuacao":80},"Equipe 4":{"pontuacao":75},"Equipe 5":{"pontuacao":70},"Equipe 6":{"pontuacao":60},"Equipe 7":{"pontuacao":55},"Equipe 8":{"pontuacao":53},"Equipe 9":{"pontuacao":52},"Equipe 10":{"pontuacao":49},"Equipe 11":{"pontuacao":45},"Equipe 12":{"pontuacao":42},"Equipe 13":{"pontuacao":39},"Equipe 14":{"pontuacao":35},"Equipe 15":{"pontuacao":33},"Equipe 16":{"pontuacao":29},"Equipe 17":{"pontuacao":18},"Equipe 18":{"pontuacao":15},"Equipe 19":{"pontuacao":10},"Equipe 20":{"pontuacao":5}}
+{
+    "Equipe 1": {
+        "pontuacao": 0
+    },
+    "Equipe 2": {
+        "pontuacao": 0
+    },
+    "Equipe 3": {
+        "pontuacao": 0
+    },
+    "Equipe 4": {
+        "pontuacao": 0
+    },
+    "Equipe 5": {
+        "pontuacao": 0
+    },
+    "Equipe 6": {
+        "pontuacao": 0
+    },
+    "Equipe 7": {
+        "pontuacao": 0
+    },
+    "Equipe 8": {
+        "pontuacao": 0
+    },
+    "Equipe 9": {
+        "pontuacao": 0
+    },
+    "Equipe 10": {
+        "pontuacao": 0
+    },
+    "Equipe 11": {
+        "pontuacao": 0
+    },
+    "Equipe 12": {
+        "pontuacao": 0
+    },
+    "Equipe 13": {
+        "pontuacao": 0
+    },
+    "Equipe 14": {
+        "pontuacao": 0
+    },
+    "Equipe 15": {
+        "pontuacao": 0
+    },
+    "Equipe 16": {
+        "pontuacao": 0
+    },
+    "Equipe 17": {
+        "pontuacao": 0
+    },
+    "Equipe 18": {
+        "pontuacao": 0
+    },
+    "Equipe 19": {
+        "pontuacao": 0
+    },
+    "Equipe 20": {
+        "pontuacao": 0
+    }
+}
