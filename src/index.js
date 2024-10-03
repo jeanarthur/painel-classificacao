@@ -41,12 +41,12 @@ app.get('/formulario', async (req, res) => {
 });
 
 app.post('/enviar-formulario', async (req, res) => {
-    const parsedData = formularioSchema.parse(req.body);
-        
-    const { team, score } = parsedData;
-    adicionarPontos(team, score);
-    
     try{
+        const parsedData = formularioSchema.parse(req.body);
+            
+        const { team, score } = parsedData;
+        adicionarPontos(team, score);
+
         await Pontuacao.create({equipe:team, pontuacao:score})
         res.send(`A equipe ${team} marcou ${score} pontos`);
     } catch(error) {
