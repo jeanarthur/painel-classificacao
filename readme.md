@@ -2,11 +2,21 @@
 
 # Instalação
 
+## Preparação do Projeto
+
 Clone o repositório \
 `git clone https://github.com/jeanarthur/painel-classificacao.git`
 
 Instale as dependências do Node \
 `npm install`
+
+## Preparação do Banco
+
+Instale o utilitário
+`npm install -g sequelize-cli`
+
+Inicialize o banco de dados
+`npx sequelize-cli db:migrate`
 
 # Execução
 
